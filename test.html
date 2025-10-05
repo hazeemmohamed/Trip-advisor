@@ -1,0 +1,162 @@
+<!-- HTML -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Horizontal cards (3 visible on ≤600px)</title>
+<style>
+  :root{
+    --nav-height: 64px;
+    --gap: 12px;
+  }
+
+  /* reset / basics */
+  *{box-sizing: border-box}
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial; padding-top:var(--nav-height)}
+
+  /* fixed navbar */
+  .navbar{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:var(--nav-height);
+    display:flex; align-items:center; gap:12px;
+    padding:0 16px;
+    background:#fff;
+    z-index:50;
+    border-bottom:1px solid rgba(0,0,0,0.06);
+  }
+
+  .page {
+    max-width:1200px;
+    margin: 0 auto;
+    padding:16px;
+  }
+
+  /* carousel area */
+  .carousel-wrap{
+    position:relative;
+    margin: 18px 0;
+  }
+
+  .cards {
+    display:flex;
+    gap:var(--gap);
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
+    padding:8px 6px; /* small padding so edges don't touch */
+  }
+
+  /* card style */
+  .card{
+    background: #fff;
+    border-radius:8px;
+    padding:16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    min-height:120px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    scroll-snap-align:start;
+    flex:0 0 auto; /* we'll set exact width in media query */
+  }
+
+  /* arrows (optional) */
+  .arrow {
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    border:0;
+    background: rgba(0,0,0,0.06);
+    width:36px; height:36px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .arrow.prev{ left:6px }
+  .arrow.next{ right:6px }
+  .arrow:active{ transform:translateY(-50%) scale(0.97) }
+
+  /* hide native scrollbar on webkit but keep scrollability */
+  .cards::-webkit-scrollbar{ height:8px; }
+  .cards::-webkit-scrollbar-thumb{ background: rgba(0,0,0,0.12); border-radius:8px }
+  .cards::-webkit-scrollbar-track{ background: transparent; }
+
+  /* Desktop behavior: wrap normally */
+  @media (min-width: 601px){
+    .cards { overflow-x:hidden; flex-wrap:wrap }
+    .card { flex: 1 1 calc(33.333% - var(--gap)); min-width:220px }
+    .arrow { display:none } /* hide arrows on wide screens */
+  }
+
+  /* Mobile <= 600px: show 3 cards visible at once, horizontal scroll */
+  @media (max-width:600px){
+    /* Calculation: each card = (100% - (2 * gap)) / 3
+       We use padding on container so this width aligns visually */
+    .card {
+      flex: 0 0 calc((100% - (2 * var(--gap))) / 3);
+      max-width: calc((100% - (2 * var(--gap))) / 3);
+    }
+    .arrow{ display:flex } /* show arrows to jump pages */
+  }
+</style>
+</head>
+<body>
+
+  <header class="navbar">
+    <strong>My Site</strong>
+    <nav style="margin-left:auto">Navbar links</nav>
+  </header>
+
+  <main class="page">
+    <h2>Popular items</h2>
+
+    <section class="carousel-wrap" aria-label="Popular items carousel">
+      <button class="arrow prev" aria-label="Previous">‹</button>
+      <div class="cards" id="cards">
+        <!-- Add as many .card items as you want -->
+        <article class="card">Item 1</article>
+        <article class="card">Item 2</article>
+        <article class="card">Item 3</article>
+        <article class="card">Item 4</article>
+        <article class="card">Item 5</article>
+        <article class="card">Item 6</article>
+        <article class="card">Item 7</article>
+      </div>
+      <button class="arrow next" aria-label="Next">›</button>
+    </section>
+
+    <p>Other page content below the carousel – page scroll works normally.</p>
+    <div style="height:1200px;background:linear-gradient(#fafafa,#eee)"></div>
+  </main>
+
+<script>
+  // arrows scroll by one "page" (showing 3 cards on small screens)
+  (function(){
+    const container = document.getElementById('cards');
+    const prev = document.querySelector('.arrow.prev');
+    const next = document.querySelector('.arrow.next');
+
+    // compute page width based on visible area (container.clientWidth)
+    function scrollPage(dir=1){
+      // For consistent behavior, scroll by container width minus small gap
+      const amount = container.clientWidth - 8; // minor overlap allowed
+      container.scrollBy({ left: dir * amount, behavior: 'smooth' });
+    }
+
+    prev.addEventListener('click', ()=> scrollPage(-1));
+    next.addEventListener('click', ()=> scrollPage(1));
+
+    // keyboard support when container focused
+    container.tabIndex = 0;
+    container.addEventListener('keydown', (e)=>{
+      if(e.key === 'ArrowRight') { scrollPage(1); e.preventDefault() }
+      if(e.key === 'ArrowLeft') { scrollPage(-1); e.preventDefault() }
+    });
+  })();
+</script>
+
+</body>
+</html>
