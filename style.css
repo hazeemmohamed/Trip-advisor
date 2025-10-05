@@ -279,15 +279,16 @@ background-color: #E5E5E5;
   flex-wrap: nowrap;
   gap: 20px;
   overflow-x: auto;
- -webkit-overflow-scrolling: touch; 
+ -webkit-overflow-scrolling: touch;
+ flex-grow: 1; 
 }
 
 .card {
   position: relative;
-  flex: 1 1 calc(25% - 20px);
   border-radius: 10px;
   min-width: 250px;
   cursor: pointer;
+  flex-basis: 25%;
 }
 
 
@@ -308,8 +309,20 @@ background-color: #E5E5E5;
   font-weight: bold;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
 }
-.arrow-btn {
-
+.arrow-btn1 {
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    border: 2px solid #0b3b2e;
+    border-radius: 50%;
+    font-size: 18px;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    color: #0b3b2e;
+    
 }
 
 
